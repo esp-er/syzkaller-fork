@@ -1,0 +1,4 @@
+# https://syzkaller.appspot.com/bug?id=9d518829098a93dc356bb088d657949d3991ba2f
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"threaded":true,"repeat":true,"procs":6,"sandbox":"","fault_call":-1,"close_fds":false}
+syz_read_part_table(0x0, 0xe59, &(0x7f0000000040)=[{&(0x7f0000000080)="02010500d8000a000000ff45ac00000000006300e931190000000000000680ffffff81000000e100e2ff877700720030070081ffffff00000000008000da55aa1adf1103b8b6acc2722e", 0x40, 0x1c0}])
