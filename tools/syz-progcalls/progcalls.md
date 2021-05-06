@@ -30,9 +30,9 @@ To only print call info to stdout use e.g
 ./progcalls -debug -p kfree_skb_7.syz 
 ```
 
-#JSON Format
+# JSON Format
 
-Currently the json format is as such
+Currently the json format output is as such:
 ```
 {
 "File: "filename.syz", (__Filename String__)
@@ -47,11 +47,11 @@ A __Call__ is structured as such:
  "Arguments": [] (__List of arguments inside call__)
 }
 ```
-Arguments contain:
+__Arguments__ contain:
 ```
 {
-"ArgName": "(e.g) file", (__String description of argument__),
-"ArgType":  "(e.g) flags, (__String description of the argument type__)
+"ArgName": (e.g) "file", (__String description of argument__),
+"ArgType": (e.g) "flags", (__String description of the argument type__)
  "HasVal": true/false, (__Bool to indicate if call has a constant file path value associated (currently__)
  "ArgVal": "/path/to/file" (__Currently only contains an argument file path if one exists__)
 }
