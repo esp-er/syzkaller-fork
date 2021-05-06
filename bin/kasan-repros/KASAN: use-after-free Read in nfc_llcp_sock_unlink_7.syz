@@ -1,7 +1,0 @@
-# https://syzkaller.appspot.com/bug?id=5352e0c8a505e714690340f9d21cdaa8c098e3c4
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"repeat":true,"procs":6,"slowdown":1,"sandbox":"","fault_call":-1,"close_fds":false}
-r0 = syz_init_net_socket$nfc_llcp(0x27, 0x1, 0x1)
-bind$nfc_llcp(r0, &(0x7f0000000140)={0x27, 0x0, 0x0, 0x0, 0x0, 0x0, "ef5a9db7ae822a99aa0c9882d5e2eea191ab2bdfa180f2d9b699c6deab89e04eb2e27a355feeed16594a8cbf27b9afb59d8f85d47cefbb6d00", 0x22}, 0x60)
-listen(r0, 0x0)
-accept4(r0, 0x0, 0x0, 0x80800)

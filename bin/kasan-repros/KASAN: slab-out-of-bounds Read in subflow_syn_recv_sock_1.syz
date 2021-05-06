@@ -1,9 +1,0 @@
-# https://syzkaller.appspot.com/bug?id=52b588f452925c30f1ea28c2f0fd7494e716ca94
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"threaded":true,"collide":true,"repeat":true,"procs":6,"sandbox":"none","fault_call":-1,"netdev":true,"close_fds":true}
-r0 = socket$inet6_tcp(0xa, 0x1, 0x0)
-r1 = socket$inet6_tcp(0xa, 0x1, 0x0)
-socket$inet6_mptcp(0xa, 0x1, 0x106)
-bind$inet6(r1, &(0x7f0000000040)={0xa, 0x4e22}, 0x1c)
-listen(r1, 0x0)
-sendto$inet6(r0, 0x0, 0x0, 0x24004044, &(0x7f00000000c0)={0xa, 0x4e22}, 0x1c)

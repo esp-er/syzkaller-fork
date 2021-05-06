@@ -1,5 +1,0 @@
-# https://syzkaller.appspot.com/bug?id=c173ad918406681bbb58281b0a9220b6504a4e29
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"procs":1,"sandbox":"","fault_call":-1,"close_fds":false}
-r0 = syz_open_dev$radio(&(0x7f00000003c0)='/dev/radio#\x00', 0x1, 0x2)
-ioctl(r0, 0x1010008913, 0x0)

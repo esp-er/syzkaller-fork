@@ -1,0 +1,5 @@
+# https://syzkaller.appspot.com/bug?id=58095564a50a6634fe52205fd4ccb13340adb2f7
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"procs":1,"sandbox":"","fault_call":-1,"close_fds":false,"devlinkpci":true}
+r0 = openat$ndctl0(0xffffffffffffff9c, &(0x7f0000000000)='/dev/ndctl0\x00', 0x20402, 0x0)
+ioctl$MON_IOCX_GETX(r0, 0x4018920a, &(0x7f00000001c0)={0x0, &(0x7f00000000c0)=""/202, 0xca})

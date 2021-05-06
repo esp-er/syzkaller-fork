@@ -1,8 +1,0 @@
-# https://syzkaller.appspot.com/bug?id=8340d4b8c7304ff0b43490a1b69ab3833dd7ad20
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"threaded":true,"collide":true,"procs":1,"sandbox":"none","fault_call":-1,"tun":true,"netdev":true}
-socket$packet(0x11, 0x3, 0x300)
-r0 = socket$inet(0x2, 0x4000000000000001, 0x0)
-bind$inet(r0, &(0x7f00000000c0)={0x2, 0x204e23, @broadcast}, 0x10)
-sendto$inet(r0, 0x0, 0x7f, 0x400200007fe, &(0x7f0000000080)={0x2, 0x10084e23, @local}, 0x10)
-write$binfmt_elf64(r0, &(0x7f00000016c0)=ANY=[@ANYPTR, @ANYRESDEC, @ANYRES16], 0x1e)

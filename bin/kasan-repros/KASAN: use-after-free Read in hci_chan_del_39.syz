@@ -1,5 +1,0 @@
-# https://syzkaller.appspot.com/bug?id=fec182d534b82570ac1071dd89350d3a8b77a5da
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"procs":1,"sandbox":"none","fault_call":-1,"close_fds":false,"vhci":true}
-syz_emit_vhci(&(0x7f0000000500)=ANY=[@ANYBLOB="044603000000ff"], 0x7)
-syz_emit_vhci(&(0x7f0000000100)=ANY=[@ANYBLOB="02c82012000e0001000f0604000cfc17d2218104e30600"], 0x17)

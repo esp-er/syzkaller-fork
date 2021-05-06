@@ -1,9 +1,0 @@
-# https://syzkaller.appspot.com/bug?id=fec182d534b82570ac1071dd89350d3a8b77a5da
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"procs":1,"sandbox":"none","fault_call":-1,"close_fds":false,"vhci":true}
-syz_emit_vhci(&(0x7f0000000040)=ANY=[@ANYBLOB="0446000000"], 0x7)
-r0 = syz_init_net_socket$bt_sco(0x1f, 0x5, 0x2)
-syz_init_net_socket$bt_sco(0x1f, 0x5, 0x2)
-setsockopt$bt_BT_POWER(r0, 0x112, 0x9, 0x0, 0x0)
-getsockopt$IP_VS_SO_GET_INFO(0xffffffffffffffff, 0x0, 0x481, 0x0, 0x0)
-syz_init_net_socket$bt_sco(0x1f, 0x5, 0x2)

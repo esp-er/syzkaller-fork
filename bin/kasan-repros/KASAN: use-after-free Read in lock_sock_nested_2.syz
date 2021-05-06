@@ -1,6 +1,0 @@
-# https://syzkaller.appspot.com/bug?id=6c137905024f86513297b035845acecb55fa9dab
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"threaded":true,"collide":true,"repeat":true,"procs":6,"slowdown":1,"sandbox":"none","fault_call":-1,"tun":true,"netdev":true,"resetnet":true,"cgroups":true,"binfmt_misc":true,"close_fds":true,"usb":true,"vhci":true,"wifi":true,"ieee802154":true,"sysctl":true,"tmpdir":true,"segv":true}
-r0 = syz_init_net_socket$bt_l2cap(0x1f, 0x3, 0x0)
-connect$bt_rfcomm(r0, &(0x7f0000000140), 0xa)
-shutdown(r0, 0x1)

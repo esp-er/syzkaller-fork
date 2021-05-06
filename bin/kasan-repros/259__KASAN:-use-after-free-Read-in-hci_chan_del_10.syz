@@ -1,0 +1,15 @@
+# https://syzkaller.appspot.com/bug?id=fec182d534b82570ac1071dd89350d3a8b77a5da
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"procs":1,"sandbox":"none","fault_call":-1,"close_fds":false,"vhci":true}
+connect(0xffffffffffffffff, 0x0, 0x0)
+syz_init_net_socket$bt_l2cap(0x1f, 0x3, 0x0)
+ioctl$FS_IOC_SETVERSION(0xffffffffffffffff, 0x40087602, 0x0)
+r0 = syz_init_net_socket$bt_sco(0x1f, 0x5, 0x2)
+getsockopt$bt_sco_SCO_OPTIONS(r0, 0x11, 0x1, 0x0, 0x0)
+r1 = syz_init_net_socket$bt_sco(0x1f, 0x5, 0x2)
+ioctl$sock_SIOCETHTOOL(r1, 0x8946, 0x0)
+ioctl$sock_FIOSETOWN(0xffffffffffffffff, 0x8901, 0x0)
+ioctl$sock_SIOCSPGRP(r0, 0x8902, 0x0)
+bind$bt_sco(0xffffffffffffffff, 0x0, 0x0)
+syz_init_net_socket$bt_l2cap(0x1f, 0x3, 0x0)
+syz_emit_vhci(&(0x7f0000000000)=ANY=[@ANYBLOB="044604000000009e9d4043af0efc35a7737b"], 0x7)

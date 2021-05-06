@@ -1,0 +1,17 @@
+# https://syzkaller.appspot.com/bug?id=13849f0d9b1b818b087341691be6cc3ac6a6bfb7
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"repeat":true,"procs":6,"sandbox":"","fault_call":-1,"close_fds":false,"devlinkpci":true}
+creat(&(0x7f0000000300)='./file0\x00', 0x0)
+clone(0x2000100, 0x0, 0xfffffffffffffffe, 0x0, 0xffffffffffffffff)
+mount(0x0, &(0x7f0000000140)='./file0\x00', 0x0, 0x0, &(0x7f0000000200)='devpts\x00')
+r0 = gettid()
+tkill(r0, 0x3c)
+prlimit64(0x0, 0xe, 0x0, 0x0)
+connect$inet6(0xffffffffffffffff, &(0x7f0000000000)={0xa, 0x0, 0x0, @local, 0x6}, 0x1c)
+r1 = openat$loop_ctrl(0xffffffffffffff9c, &(0x7f00000009c0)='/dev/loop-control\x00', 0x0, 0x0)
+r2 = ioctl$LOOP_CTL_GET_FREE(r1, 0x4c82)
+ioctl$LOOP_CTL_REMOVE(r1, 0x4c81, r2)
+r3 = syz_open_dev$loop(&(0x7f00000001c0)='/dev/loop#\x00', 0x0, 0x0)
+ioctl$BLKTRACESETUP(r3, 0xc0481273, &(0x7f0000000040)={[], 0x0, 0x9, 0x200})
+ioctl$BLKTRACESTART(r3, 0x1274, 0x0)
+socket$inet_udplite(0x2, 0x2, 0x88)

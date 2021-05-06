@@ -1,8 +1,0 @@
-# https://syzkaller.appspot.com/bug?id=cc9f4ab3d1198237b0ee1f751ca02e21f8d46445
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"threaded":true,"collide":true,"repeat":true,"procs":8,"sandbox":"","fault_call":-1,"waitrepeat":true}
-pipe2(&(0x7f0000000140)={0xffffffffffffffff, <r0=>0xffffffffffffffff}, 0x0)
-mmap(&(0x7f0000011000/0x3000)=nil, 0x3000, 0x1, 0x32, 0xffffffffffffffff, 0x0)
-userfaultfd(0x0)
-r1 = creat(&(0x7f0000000100)='./file0\x00', 0x0)
-mount$9p_fd(0x0, &(0x7f0000000000)='./file0\x00', &(0x7f0000000040)='9p\x00', 0x0, &(0x7f00000001c0)={'trans=fd,', {'rfdno', 0x3d, r0}, 0x2c, {'wfdno', 0x3d, r1}, 0x2c})

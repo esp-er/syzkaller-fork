@@ -1,0 +1,13 @@
+# https://syzkaller.appspot.com/bug?id=ffccb5b7eaae1bd46ec0bd18aa9923cee7cfdb60
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"threaded":true,"collide":true,"repeat":true,"procs":8,"sandbox":"","fault_call":-1,"segv":true}
+mkdir(&(0x7f00000003c0)='./control\x00', 0x0)
+mmap(&(0x7f0000011000/0x3000)=nil, 0x3000, 0x1, 0x32, 0xffffffffffffffff, 0x0)
+r0 = userfaultfd(0x0)
+ioctl$UFFDIO_API(r0, 0xc018aa3f, &(0x7f0000000480))
+ioctl$UFFDIO_REGISTER(r0, 0xc020aa00, &(0x7f0000000200)={{&(0x7f0000011000/0x3000)=nil, 0x3000}, 0x1})
+r1 = creat(&(0x7f0000000040)='./control/file0\x00', 0x0)
+write$sndseq(r1, &(0x7f0000011fd2)=[{0x0, 0x0, 0xffffffffffffffff, 0x0, @tick=0x80, {0x0, 0x40000000000}, {0x8}, @time=@time={0x77359400}}], 0x30)
+mkdir(&(0x7f0000000100)='./file0\x00', 0x0)
+r2 = openat$dsp(0xffffffffffffff9c, &(0x7f0000000140)='/dev/dsp\x00', 0x0, 0x0)
+mount$9p_fd(0x0, &(0x7f0000000000)='./file0\x00', &(0x7f00000000c0)='9p\x00', 0x0, &(0x7f00000004c0)={'trans=fd,', {'rfdno', 0x3d, r2}, 0x2c, {'wfdno', 0x3d, r1}})

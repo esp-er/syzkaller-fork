@@ -1,0 +1,6 @@
+# https://syzkaller.appspot.com/bug?id=fec182d534b82570ac1071dd89350d3a8b77a5da
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"procs":1,"sandbox":"none","fault_call":-1,"close_fds":false,"vhci":true}
+mount$bpf(0x20000000, &(0x7f0000000100)='./file0\x00', 0x0, 0x2001001, 0x0)
+pivot_root(0x0, &(0x7f0000000080)='./file0\x00')
+syz_emit_vhci(&(0x7f0000000340)=@HCI_EVENT_PKT={0x4, @hci_ev_disconn_logical_link_complete={{0x46, 0x4}}}, 0x7)

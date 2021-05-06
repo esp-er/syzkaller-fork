@@ -1,0 +1,14 @@
+# https://syzkaller.appspot.com/bug?id=8340d4b8c7304ff0b43490a1b69ab3833dd7ad20
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"threaded":true,"collide":true,"procs":1,"sandbox":"","fault_call":-1}
+r0 = socket$inet6_tcp(0xa, 0x1, 0x0)
+r1 = socket$inet6_tcp(0xa, 0x1, 0x0)
+bind$inet6(r1, &(0x7f00000000c0)={0xa, 0x4e22}, 0x1c)
+socket$inet_udplite(0x2, 0x2, 0x88)
+listen(r1, 0x0)
+sendto$inet6(r0, 0x0, 0x0, 0x20004004, &(0x7f0000000040)={0xa, 0x20004e22, 0x0, @loopback}, 0x1c)
+socket$inet6(0xa, 0x80803, 0x6)
+setsockopt$inet6_tcp_TLS_TX(0xffffffffffffffff, 0x11a, 0x1, 0x0, 0x0)
+setsockopt$inet6_tcp_int(r0, 0x6, 0x19, &(0x7f0000000080)=0xc5, 0x4)
+sendto$inet6(r0, &(0x7f00000005c0), 0xffffffffffffffc1, 0x0, 0x0, 0x923d000000000000)
+close(r1)

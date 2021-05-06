@@ -3,8 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-
-	//"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/google/syzkaller/prog"
@@ -17,20 +15,20 @@ import (
 	"strings"
 )
 
-type BugReproducer struct{
-	Filename string `json:"Filename"`
-	Calls []SysCallDesc
+type BugReproducer struct {
+	Filename string `json:"File"`
+	Calls    []SysCallDesc
 }
 type SysCallDesc struct {
-	Name string `json:"SyscallName"`
-	NR uint64  `json:"SyscallNR"`
+	Name      string `json:"SyscallName"`
+	NR        uint64 `json:"SyscallNR"`
 	Arguments []JsonArgs
 }
-type JsonArgs struct{
+type JsonArgs struct {
 	ArgName string
 	ArgType string
-	HasVal bool
-	ArgVal string
+	HasVal  bool
+	ArgVal  string
 }
 
 var (
@@ -45,11 +43,14 @@ var (
 	flagFaultNth   = flag.Int("fault_nth", 0, "inject fault on n-th operation (0-based)")
 	flagDebug      = flag.Bool("debug", false, "show syscall parsing messages")
 	flagRepro      = flag.Bool("repro", false, "add heartbeats used by pkg/repro")
-	flagPrintJson  = flag.Bool( "print", false, "print JSON output to stdout")
-	flagExportJson = flag.String( "json", "",  "<filename> output syscall descriptions to JSON file" )
+	flagPrintJson  = flag.Bool("print", false, "print JSON output to stdout")
+	flagExportJson = flag.String("json", "", "<filename> output syscall descriptions to JSON file")
 )
 
-
+var callsToParse = map[string]bool{
+	"open":   true,
+	"openat": true,
+}
 
 func main() {
 	flag.Usage = func() {
@@ -112,14 +113,23 @@ func main() {
 				}
 
 				r := BugReproducer{Filename: f.Name(), Calls: make([]SysCallDesc, 0)}
-				//fmt.Printf("File: %s \n", f.Name())
-				for _, call := range p.Calls {
-					seenOpenCalls := 0
 
-					//fmt.Printf("Syscall name: %s ---", call.Meta.Name)
-					//fmt.Printf("number: %d ---", call.Meta.NR)
-					//fmt.Printf("Syscall comment: %s\n", call.Comment)
-					//fmt.Printf("args(name, type): ---")
+				if *flagDebug {
+					fmt.Printf("File: %s \n", f.Name())
+				}
+
+				var parsed = make(map[string]int)
+				for key, _ := range callsToParse {
+					parsed[key] = 0
+				}
+
+				for _, call := range p.Calls {
+					if *flagDebug {
+						fmt.Printf("Syscall name: %s -- ", call.Meta.Name)
+						fmt.Printf("number: %d -- ", call.Meta.NR)
+						fmt.Printf("Syscall comment: %s\n", call.Comment)
+						fmt.Printf("args(name, type): -- ")
+					}
 
 					var simpleCall = SysCallDesc{
 						Name:      call.Meta.Name,
@@ -128,16 +138,23 @@ func main() {
 					}
 					var p = ""
 					var valExists = false
-					if call.Meta.Name == "open" {
-						p = parseOpenCall(fp, seenOpenCalls)
-						seenOpenCalls++
+					var strippedCall = strings.Split(call.Meta.Name, "$")[0]
+					if callsToParse[call.Meta.Name] {
+						p = parseOpenCall(fp, parsed[call.Meta.Name], call.Meta.Name)
+						parsed[call.Meta.Name] += 1
+					} else if callsToParse[strippedCall] {
+						p = parseOpenCall(fp, parsed[strippedCall], strippedCall)
+						parsed[strippedCall] += 1
 					}
+
 					if p != "" {
 						valExists = true
 					}
+
 					for _, a := range call.Meta.Args {
-						//fmt.Printf(" %s, %s -", a.Name, a.Type)
-						//if(*flagExportJson != "")
+						if *flagDebug {
+							fmt.Printf(" %s, %s -", a.Name, a.Type)
+						}
 						var v = ""
 						var b = false
 						if a.Name == "file" {
@@ -154,10 +171,12 @@ func main() {
 							simpleCall.Arguments = append(simpleCall.Arguments, simpleArg)
 						}
 					}
-					if (call.Meta.Name == "open") {
+					if callsToParse[call.Meta.Name] || callsToParse[strippedCall] {
 						r.Calls = append(r.Calls, simpleCall)
 					}
-					//fmt.Printf("\n")
+					if *flagDebug {
+						fmt.Printf("\n")
+					}
 				}
 				reprosJson = append(reprosJson, r)
 			}
@@ -174,13 +193,12 @@ func main() {
 	}
 }
 
-
 func writeJson(repros []BugReproducer) {
 	f, _ := json.MarshalIndent(repros, "", " ")
 	_ = ioutil.WriteFile(*flagExportJson, f, 0644)
 }
 
-func parseOpenCall(fp string, pos int) string {
+func parseOpenCall(fp string, pos int, callName string) string {
 	file, err := os.Open(fp)
 	if err != nil {
 		log.Fatal(err)
@@ -188,14 +206,14 @@ func parseOpenCall(fp string, pos int) string {
 	scanner := bufio.NewScanner(file)
 	var scannedOpenCalls = 0
 	var fpStr = ""
-	for scanner.Scan(){
+	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.Contains(line, "open(" ){
-			if scannedOpenCalls == pos{
+		if strings.Contains(line, callName+"(") || strings.Contains(line, callName+"$") {
+			if scannedOpenCalls == pos {
 				var e = strings.Index(line, "\\x00")
 				var s = strings.Index(line, "='")
-				if e!=-1 && s !=-1 {
-					fpStr = line[s+2:e]
+				if e != -1 && s != -1 {
+					fpStr = line[s+2 : e]
 					break
 				}
 			}
@@ -204,4 +222,3 @@ func parseOpenCall(fp string, pos int) string {
 	}
 	return fpStr
 }
-

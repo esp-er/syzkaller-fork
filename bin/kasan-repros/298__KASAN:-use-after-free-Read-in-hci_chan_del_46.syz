@@ -1,0 +1,10 @@
+# https://syzkaller.appspot.com/bug?id=fec182d534b82570ac1071dd89350d3a8b77a5da
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"procs":1,"sandbox":"none","fault_call":-1,"close_fds":false,"vhci":true}
+syz_emit_vhci(&(0x7f0000000000)=ANY=[@ANYBLOB="0446"], 0x9)
+r0 = socket$bt_cmtp(0x1f, 0x3, 0x5)
+ioctl$sock_SIOCSIFBR(r0, 0x8941, 0x0)
+socket$bt_bnep(0x1f, 0x3, 0x4)
+ioctl$sock_bt_cmtp_CMTPGETCONNLIST(r0, 0x800443d2, 0x0)
+r1 = syz_init_net_socket$bt_l2cap(0x1f, 0x1, 0x0)
+setsockopt$SO_TIMESTAMPING(r1, 0x1, 0x41, 0x0, 0x0)
