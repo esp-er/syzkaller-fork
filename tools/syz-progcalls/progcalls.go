@@ -12,9 +12,11 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
+/*Below 3 structs only used for formatting JSON output */
 type BugReproducer struct {
 	Filename string `json:"File"`
 	Calls    []SysCallDesc
@@ -30,6 +32,14 @@ type JsonArgs struct {
 	HasVal  bool
 	ArgVal  string
 }
+
+
+type OpenFlag int64
+const(
+	RDONLY OpenFlag = 0
+	WRONLY OpenFlag = 1
+	RDWR OpenFlag = 2
+)
 
 var (
 	flagOS         = flag.String("os", runtime.GOOS, "target os")
@@ -137,14 +147,23 @@ func main() {
 						Arguments: make([]JsonArgs, 0),
 					}
 					var p = ""
+					var pf = ""
+					var flags = ""
 					var valExists = false
 					var strippedCall = strings.Split(call.Meta.Name, "$")[0]
-					if callsToParse[call.Meta.Name] {
-						p = parseOpenCall(fp, parsed[call.Meta.Name], call.Meta.Name)
+					if callsToParse[call.Meta.Name] || callsToParse[strippedCall]{
+						p, pf = parseOpenCall(fp, parsed[call.Meta.Name], call.Meta.Name)
 						parsed[call.Meta.Name] += 1
-					} else if callsToParse[strippedCall] {
-						p = parseOpenCall(fp, parsed[strippedCall], strippedCall)
-						parsed[strippedCall] += 1
+					}
+
+					if pf != ""{
+						if (hexStringToInt(pf) & RDWR) == RDWR{
+							flags = "RDWR"
+						}else if (hexStringToInt(pf) & WRONLY) == WRONLY{
+							flags = "WRONLY"
+						}else{
+							flags = "RDONLY"
+						}
 					}
 
 					if p != "" {
@@ -167,6 +186,10 @@ func main() {
 								ArgType: a.Type.String(),
 								ArgVal:  v,
 								HasVal:  b,
+							}
+							if a.Name == "flags" {
+								simpleArg.ArgVal = flags
+								simpleArg.HasVal = true
 							}
 							simpleCall.Arguments = append(simpleCall.Arguments, simpleArg)
 						}
@@ -192,33 +215,52 @@ func main() {
 		}
 	}
 }
-
+func hexStringToInt(hex string) OpenFlag {
+	var x int64
+	x, _ = strconv.ParseInt(hex, 16, 64)
+	return OpenFlag(x)
+}
 func writeJson(repros []BugReproducer) {
-	f, _ := json.MarshalIndent(repros, "", " ")
+	jsonOut := struct {
+		Repros []BugReproducer `json:"kasan-repros"`
+	}{
+		repros,
+	}
+
+	fmt.Println(len(repros))
+	f, _ := json.MarshalIndent(jsonOut, "", " ")
 	_ = ioutil.WriteFile(*flagExportJson, f, 0644)
 }
 
-func parseOpenCall(fp string, pos int, callName string) string {
+func parseOpenCall(fp string, pos int, callName string) (string, string) {
 	file, err := os.Open(fp)
 	if err != nil {
 		log.Fatal(err)
 	}
 	scanner := bufio.NewScanner(file)
-	var scannedOpenCalls = 0
+	var scannedCalls = 0
 	var fpStr = ""
+	var openFlags = ""
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.Contains(line, callName+"(") || strings.Contains(line, callName+"$") {
-			if scannedOpenCalls == pos {
-				var e = strings.Index(line, "\\x00")
-				var s = strings.Index(line, "='")
-				if e != -1 && s != -1 {
-					fpStr = line[s+2 : e]
-					break
+		if strings.Contains(line, callName+"("){
+			if scannedCalls == pos {
+				var argStr = line[strings.Index(line, callName+"(") : len(line)-1]
+				var split = strings.Split(argStr, ",")
+				for i, a := range split {
+					var e = strings.Index(a, "\\x00")
+					var s = strings.Index(a, "='")
+					if e != -1 && s != -1 {
+						fpStr = a[s+2 : e]
+						if i < len(split) - 1 {
+							openFlags = strings.Replace(strings.TrimSpace(split[i+1]), "0x", "", -1)
+						}
+						break
+					}
 				}
 			}
-			scannedOpenCalls++
+			scannedCalls++
 		}
 	}
-	return fpStr
+	return fpStr, openFlags
 }
